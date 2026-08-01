@@ -1,9 +1,4 @@
-interface ITarefa {
-    id: number;
-    title: string;
-    completed: boolean;
-}
-
+import prisma from '../config/prismaClient';
 interface ICriarTarefa {
     title: string;
 }
@@ -11,37 +6,35 @@ interface ICriarTarefa {
 const bancoDeDadosEmMemoria: ITarefa[] = [];
 
 class TarefaService {
-    create({ title }: ICriarTarefa) {
+
+    class TarefaService {
+    async create({ title }: ICriarTarefa) {
         if (!title) {
             throw new Error("Título da tarefa é obrigatório");
         }
-        const novaTarefa: ITarefa = { id: Math.random(), title, completed: false };
-        bancoDeDadosEmMemoria.push(novaTarefa);
-        return novaTarefa;
+        return prisma.task.create({ data: { title } });
     }
 
-    list(completed?: string) {
-        if (completed === undefined) return bancoDeDadosEmMemoria;
+    async list(completed?: string) {
+        if (completed === undefined) return prisma.task.findMany();
         const bool = completed === 'true';
-        return bancoDeDadosEmMemoria.filter(t => t.completed === bool);
+        return prisma.task.findMany({ where: { completed: bool } });
     }
 
-    findById(id: number) {
-        return bancoDeDadosEmMemoria.find(t => t.id === id);
+    async findById(id: number) {
+        return prisma.task.findUnique({ where: { id } });
     }
 
-    update(id: number, dados: Partial<ICriarTarefa & { completed: boolean }>) {
-        const tarefa = this.findById(id);
-        if (!tarefa) return null;
-        if (dados.title !== undefined) tarefa.title = dados.title;
-        if (dados.completed !== undefined) tarefa.completed = dados.completed;
-        return tarefa;
+    async update(id: number, dados: Partial<ICriarTarefa & { completed: boolean }>) {
+        const existe = await this.findById(id);
+        if (!existe) return null;
+        return prisma.task.update({ where: { id }, data: dados });
     }
 
-    delete(id: number) {
-        const index = bancoDeDadosEmMemoria.findIndex(t => t.id === id);
-        if (index === -1) return false;
-        bancoDeDadosEmMemoria.splice(index, 1);
+    async delete(id: number) {
+        const existe = await this.findById(id);
+        if (!existe) return false;
+        await prisma.task.delete({ where: { id } });
         return true;
     }
 }
