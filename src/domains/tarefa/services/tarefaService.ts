@@ -1,13 +1,10 @@
-import prisma from '../config/prismaClient';
+import prisma from '../../../config/prismaClient';
+
 interface ICriarTarefa {
     title: string;
 }
 
-const bancoDeDadosEmMemoria: ITarefa[] = [];
-
 class TarefaService {
-
-    class TarefaService {
     async create({ title }: ICriarTarefa) {
         if (!title) {
             throw new Error("Título da tarefa é obrigatório");
