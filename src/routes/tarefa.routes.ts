@@ -4,10 +4,10 @@ import { TarefaController } from '../domains/tarefa/controllers';
 const tarefaRoutes = Router();
 const controller = new TarefaController();
 
-tarefaRoutes.post('/tasks', controller.createTarefa);
-tarefaRoutes.get('/tasks', controller.listTarefas);
-tarefaRoutes.get('/tasks/:id', controller.findById);
-tarefaRoutes.put('/tasks/:id', controller.UpdateTarefa);
-tarefaRoutes.delete('/tasks/:id', controller.DeleteTarefa);
+tarefaRoutes.post('/', controller.createTarefa);
+tarefaRoutes.get('/', controller.listTarefas);
+tarefaRoutes.get('/:id', controller.findById);
+tarefaRoutes.put('/:id', controller.UpdateTarefa);
+tarefaRoutes.delete('/:id', controller.DeleteTarefa);
 
 export { tarefaRoutes };
